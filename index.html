@@ -475,45 +475,91 @@
   </div>
 
   <!-- 情境① 行政老師 -->
-  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
-    <div style="width:100%;max-width:1000px;">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
-        <span style="font-size:36px;">📝</span>
-        <div>
-          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 01 · 行政老師</p>
-          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">會議記錄與公文撰寫</h2>
+  <div class="slide" style="background:#FAFAF7;flex-direction:column;align-items:flex-start;padding:36px 60px;">
+    <!-- 標題列 -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;width:100%;">
+      <span style="font-size:32px;">📝</span>
+      <div>
+        <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 01 · 行政老師</p>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">會議記錄與公文撰寫</h2>
+      </div>
+    </div>
+
+    <!-- 步驟標籤列 -->
+    <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;" id="s1-tabs">
+      <button onclick="s1show(0)" id="s1t0" class="stab stab-active">① NotebookLM</button>
+      <button onclick="s1show(1)" id="s1t1" class="stab">② Gemini</button>
+      <button onclick="s1show(2)" id="s1t2" class="stab">③ Canvas 排版</button>
+      <button onclick="s1show(3)" id="s1t3" class="stab">④ 建立 Gem</button>
+    </div>
+
+    <!-- 步驟內容 -->
+    <div style="width:100%;flex:1;">
+
+      <!-- 步驟① -->
+      <div id="s1p0" class="spanel">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 幫你快速建立公文與會議的知識庫，不用從零開始。</div>
+        <div class="src-box">📁 <strong>資料來源：</strong>現場直接貼入以下網址，或搜尋後貼上找到的頁面連結。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，點擊「新增筆記本」，命名為「行政公文知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上以下其中一個網址：<br>
+            <span style="color:var(--accent-2);font-size:13px;margin-left:8px;">· 教育部公文格式說明頁　· 學校官網行事曆　· 搜尋「學校會議記錄範本」找到的頁面</span>
+          </div>
+          <div class="step-row"><span class="snum">3</span>在對話框輸入提示詞，讓 AI 整理重點</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p0-prompt">請整理這份資料中關於公文格式的重點規範，條列出主旨、說明、附件各欄位的撰寫原則，並給我三個常見的公文開頭範例句。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p0-prompt', this)">複製</button>
+        </div>
+        <div class="tip-box" style="margin-top:12px;">💡 日後可上傳：會議逐字稿、歷年公文範本、學校行政規章</div>
+      </div>
+
+      <!-- 步驟② -->
+      <div id="s1p1" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>把 NotebookLM 整理好的重點傳給 Gemini，讓它幫你直接產出完整公文。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>複製 NotebookLM 整理的重點摘要</div>
+          <div class="step-row"><span class="snum">2</span>開啟 Gemini，貼上摘要後輸入提示詞</div>
+          <div class="step-row"><span class="snum">3</span>讓 Gemini 產出公文草稿，確認後進入 Canvas 排版</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p1-prompt">以下是本次校務會議的重點記錄，請幫我：1）整理成正式會議紀錄格式（含出席人員、討論事項、決議事項）；2）另外產出一份給家長的公文通知單，說明本次會議決議的事項，語氣正式但親切，請用繁體中文輸出。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p1-prompt', this)">複製</button>
         </div>
       </div>
-      <div class="deco-line"></div>
-      <table class="step-table" style="margin-top:20px;">
-        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
-        <tr>
-          <td><span class="step-num">①</span></td>
-          <td><span class="tag-tool">NotebookLM</span></td>
-          <td>
-            現場直接貼入網址：<br>
-            · 教育部公文格式說明頁<br>
-            · 學校官網行事曆或會議公告頁面<br>
-            · 搜尋「學校會議記錄範本」找到的公開範例
-            <div class="tip-box">💡 日後可上傳：會議逐字稿、歷年公文範本、學校行政規章</div>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="step-num">②</span></td>
-          <td><span class="tag-tool">Gemini</span></td>
-          <td>提示語：「請根據這份會議記錄，幫我整理成正式會議紀錄格式，並依照公文格式產出一份給家長的通知單」</td>
-        </tr>
-        <tr>
-          <td><span class="step-num">③</span></td>
-          <td><span class="tag-tool">Canvas</span></td>
-          <td>排版成可直接列印的公文格式，含標題、主旨、說明、附件欄位</td>
-        </tr>
-        <tr>
-          <td><span class="step-num">④</span></td>
-          <td><span class="tag-tool">Gem</span></td>
-          <td>建立「行政公文助手」，輸入事件描述秒出公文草稿，再也不用對著空白頁發呆</td>
-        </tr>
-      </table>
+
+      <!-- 步驟③ -->
+      <div id="s1p2" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 把公文排版成可直接列印的格式，省去人工調整的時間。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊右上角「Canvas」按鈕</div>
+          <div class="step-row"><span class="snum">2</span>輸入提示詞，讓 Canvas 重新排版成公文格式</div>
+          <div class="step-row"><span class="snum">3</span>確認格式後，點擊「匯出」或直接複製貼入 Word</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p2-prompt">請將上方的公文內容重新排版，格式如下：標題置中、主旨單行、說明欄位分點條列、落款含學校名稱與日期欄位，整體版面清晰易讀，適合列印。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p2-prompt', this)">複製</button>
+        </div>
+      </div>
+
+      <!-- 步驟④ -->
+      <div id="s1p3" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立專屬的「行政公文助手」，下次只要輸入事件描述就能秒出草稿。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>在 Gemini 左側欄位點擊「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>貼上下方的 Gem 設定提示詞，命名為「行政公文助手」</div>
+          <div class="step-row"><span class="snum">3</span>儲存後即可使用，之後直接輸入事件描述就能出公文</div>
+        </div>
+        <div class="prompt-label">📋 Gem 設定提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p3-prompt">你是一位熟悉台灣國小行政業務的公文撰寫助手。當我描述一個行政事件或會議結果時，請自動判斷需要產出的文件類型（會議記錄、家長通知單、簽呈、公告），並依照正式公文格式輸出，語氣正式但親切，所有內容用繁體中文。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p3-prompt', this)">複製</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -771,6 +817,105 @@
 <div onclick="goTo(current + 1)" style="position:fixed;right:0;top:0;height:100vh;width:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;opacity:0;transition:opacity 0.2s;" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
   <div style="background:rgba(45,106,79,0.85);color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,0.2);backdrop-filter:blur(4px);">›</div>
 </div>
+
+<style>
+.stab {
+  padding: 10px 20px;
+  border-radius: 24px;
+  border: 2px solid var(--border-light);
+  background: white;
+  color: var(--text-secondary);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.stab:hover { border-color: var(--accent-2); color: var(--accent-1); }
+.stab-active { background: var(--accent-1) !important; color: white !important; border-color: var(--accent-1) !important; }
+
+.spanel { width: 100%; }
+
+.goal-box {
+  background: #FFF8EE;
+  border-left: 4px solid var(--accent-3);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 18px;
+  font-size: 14px;
+  color: #7A5C2A;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.src-box {
+  background: #F0FAF5;
+  border-left: 4px solid var(--accent-2);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 18px;
+  font-size: 14px;
+  color: var(--accent-1);
+  margin-bottom: 10px;
+}
+.steps-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+.snum {
+  min-width: 28px; height: 28px;
+  background: var(--accent-3);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; flex-shrink: 0;
+}
+.prompt-label { font-size: 13px; font-weight: 700; color: var(--accent-1); margin-bottom: 6px; }
+.prompt-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: white;
+  border: 2px dashed var(--accent-3);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.prompt-text { flex: 1; font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+.copy-btn {
+  flex-shrink: 0;
+  background: var(--accent-1);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.copy-btn:hover { background: var(--accent-2); }
+</style>
+
+<script>
+function s1show(n) {
+  [0,1,2,3].forEach(i => {
+    document.getElementById('s1p'+i).style.display = i===n ? 'block' : 'none';
+    const t = document.getElementById('s1t'+i);
+    t.classList.toggle('stab-active', i===n);
+  });
+}
+function copyPrompt(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ 已複製';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
 
 <div class="progress-bar" id="progressBar"></div>
 <div class="slide-counter" id="slideCounter">1 / 16</div>
