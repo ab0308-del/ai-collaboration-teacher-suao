@@ -764,7 +764,7 @@
 
 <div class="progress-bar" id="progressBar"></div>
 <div class="slide-counter" id="slideCounter">1 / 16</div>
-<div class="nav-hint">← → 鍵換頁，或點擊畫面</div>
+<div class="nav-hint">← → 鍵換頁</div>
 
 <!-- 右上角跳頁選單 -->
 <div id="jumpMenu" style="position:fixed;top:16px;right:16px;z-index:200;">
@@ -856,19 +856,12 @@
     if (current === 2) {
       const tag = document.activeElement.tagName;
       if (tag === 'TEXTAREA' || tag === 'INPUT') return;
-      // 非輸入框時，只允許左右鍵換頁，不允許空白鍵（避免誤觸）
       if (e.key === 'ArrowRight') goTo(current + 1);
       if (e.key === 'ArrowLeft') goTo(current - 1);
       return;
     }
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
-  });
-
-  document.getElementById('slidesWrapper').addEventListener('click', e => {
-    // 第三頁（文字雲）：點擊不換頁
-    if (current === 2) return;
-    if (!document.getElementById('jumpMenu').contains(e.target)) goTo(current + 1);
   });
 </script>
 </body>
