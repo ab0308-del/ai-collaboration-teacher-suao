@@ -563,73 +563,148 @@
     </div>
   </div>
 
+  <!-- 情境① 行政老師 -->
+  <div class="slide" style="background:#FAFAF7;flex-direction:column;align-items:flex-start;padding:36px 60px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;width:100%;">
+      <span style="font-size:32px;">📝</span>
+      <div>
+        <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 01 · 行政老師</p>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">打造「國小行政公文助手」</h2>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;">
+      <button onclick="s1show(0)" id="s1t0" class="stab stab-active">① 精準萃取</button>
+      <button onclick="s1show(1)" id="s1t1" class="stab">② 神連動生成</button>
+      <button onclick="s1show(2)" id="s1t2" class="stab">③ Canvas 排版</button>
+      <button onclick="s1show(3)" id="s1t3" class="stab">④ 建立 Gem</button>
+    </div>
+    <div style="width:100%;flex:1;overflow-y:auto;">
+      <div id="s1p0" class="spanel">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 整理國小公文格式規範，解決法規繁雜、格式不一的痛點。</div>
+        <div class="src-box">📁 <strong>建議資料來源：</strong>搜尋「縣市教育局公文製作手冊」、「校內會議紀錄範本」、「學校採購法規」等網址或 PDF。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立新筆記本，命名為「國小行政法規與公文範例知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上網址或上傳 PDF</div>
+          <div class="step-row"><span class="snum">3</span>在對話框輸入提示詞，讓 AI 整理公文格式重點</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p0-prompt">請根據匯入的資料，整理出國小常見公文（會議記錄、家長通知單、簽呈、公告）的標準格式要求、必備欄位與公文常用語詞。請務必以繁體中文條列式輸出，並將重點結構化。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p0-prompt', this)">複製</button>
+        </div>
+      </div>
+      <div id="s1p1" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>將 NotebookLM 的公文規範交給 Gemini，針對「防災演練」這個行政事件自動產出所有所需文件。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>複製實作①中 NotebookLM 產出的公文格式重點文字</div>
+          <div class="step-row"><span class="snum">2</span>切換至 Gemini，貼上內容</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 Gemini 判斷需要哪些文件並產出草稿</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p1-prompt">我是一位國小行政老師，請參考以下我提供的公文格式規範：[貼上 NotebookLM 產出的文字]。現在，請幫我處理「下個月將舉辦全校防災演練」這個行政事件。請自動判斷這需要產出哪些文件（例如：校內公告、給家長的通知單、給校長的簽呈），並依照格式以表格呈現各文件的「文件名稱」、「發文對象」、「核心內容重點」及「公文草稿」，語氣正式但親切。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p1-prompt', this)">複製</button>
+        </div>
+      </div>
+      <div id="s1p2" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 將防災演練的公文草稿排版成可直接編修的視覺化版面，需手填的欄位用粗體標示。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊右上角「Canvas」按鈕開啟畫布模式</div>
+          <div class="step-row"><span class="snum">2</span>輸入排版提示詞</div>
+          <div class="step-row"><span class="snum">3</span>在 Canvas 中直接修改日期、地點等細節，完成後複製或下載</div>
+        </div>
+        <div class="prompt-label">📋 提示詞（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p2-prompt">請在 Canvas 畫布中，將剛剛生成的各項公文草稿進行排版。請使用專業且清晰的公文排版風格，在每個文件類型標題加上合適的 Emoji（如 📄 會議記錄、✉️ 家長通知單、🖋️ 簽呈、📌 公告），並將需要我手動填寫的變數（如 [日期]、[地點]、[核稿人]）用粗體標示，請確保全部以繁體中文呈現。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p2-prompt', this)">複製</button>
+        </div>
+      </div>
+      <div id="s1p3" class="spanel" style="display:none;">
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立掛載公文規範知識庫的專屬 Gem，未來只要描述行政事件就能秒出所有所需文件。</div>
+        <div class="steps-list">
+          <div class="step-row"><span class="snum">1</span>前往 Gemini 左側「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>在「知識來源」處匯入實作①的 NotebookLM 筆記本連結</div>
+          <div class="step-row"><span class="snum">3</span>貼上下方角色設定，命名後儲存，用測試指令驗證</div>
+        </div>
+        <div class="prompt-label">📋 Gem 角色設定（複製使用）</div>
+        <div class="prompt-box">
+          <div class="prompt-text" id="s1p3-prompt">【名稱】國小行政公文助手
+【角色說明】你是一位熟悉台灣國小行政業務的公文撰寫助手。當我描述一個行政事件或會議結果時，請自動判斷需要產出的文件類型（會議記錄、家長通知單、簽呈、公告），並務必參考掛載的 NotebookLM 資料庫中的標準公文格式進行撰寫，確保格式正確。語氣正式但親切，條理分明，所有內容請用繁體中文輸出。
+【測試指令】下週二上午十點要召開五年級校外教學籌備會議，地點在校史室，請所有五年級導師及學務處人員參加。請幫我處理相關的行政文書。</div>
+          <button class="copy-btn" onclick="copyPrompt('s1p3-prompt', this)">複製</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 情境② 班導師 -->
   <div class="slide" style="background:#FAFAF7;flex-direction:column;align-items:flex-start;padding:36px 60px;">
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;width:100%;">
       <span style="font-size:32px;">🧡</span>
       <div>
         <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 02 · 班導師</p>
-        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">學生個案輔導記錄</h2>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">打造「班導師輔導記錄助手」</h2>
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;">
-      <button onclick="s2show(0)" id="s2t0" class="stab stab-active">① NotebookLM</button>
-      <button onclick="s2show(1)" id="s2t1" class="stab">② Gemini</button>
+      <button onclick="s2show(0)" id="s2t0" class="stab stab-active">① 精準萃取</button>
+      <button onclick="s2show(1)" id="s2t1" class="stab">② 神連動生成</button>
       <button onclick="s2show(2)" id="s2t2" class="stab">③ Canvas 排版</button>
       <button onclick="s2show(3)" id="s2t3" class="stab">④ 建立 Gem</button>
     </div>
-    <div style="width:100%;flex:1;">
+    <div style="width:100%;flex:1;overflow-y:auto;">
       <div id="s2p0" class="spanel">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立輔導法規與記錄格式的知識庫，讓每次撰寫都有所依據。</div>
-        <div class="src-box">📁 <strong>資料來源：</strong>現場直接貼入網址，或搜尋後貼上找到的頁面連結。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 整理輔導記錄的客觀用語與策略指引，解決紀錄缺乏專業用詞的痛點。</div>
+        <div class="src-box">📁 <strong>建議資料來源：</strong>搜尋「教育部校園安全與輔導手冊」、「兒童心理學常見行為分析」、「學校輔導室作業規範」等網址或 PDF。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立「學生輔導知識庫」筆記本</div>
-          <div class="step-row"><span class="snum">2</span>貼入以下其中一個網址：<br><span style="color:var(--accent-2);font-size:13px;margin-left:8px;">· 教育部學生輔導法條文說明頁　· 搜尋「學生輔導記錄範本」找到的頁面　· 學校輔導室資源說明頁</span></div>
-          <div class="step-row"><span class="snum">3</span>輸入提示詞，請 AI 整理輔導記錄的格式規範</div>
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立新筆記本，命名為「國小學生行為輔導與記錄法規知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上網址或上傳 PDF</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 AI 整理輔導記錄的撰寫規範</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s2p0-prompt">請整理這份資料中關於學生輔導記錄的撰寫規範，包含：應記錄哪些欄位、語氣應如何保持客觀中立、哪些情況需要轉介，並給我一個標準輔導記錄的欄位架構範例。</div>
+          <div class="prompt-text" id="s2p0-prompt">請根據匯入的資料，整理出國小常見的「學生輔導記錄」標準撰寫指南，包含客觀描述行為的常用語句、情緒狀態分類清單，以及對應的常見輔導介入策略。請務必以繁體中文條列式輸出，並將重點結構化。</div>
           <button class="copy-btn" onclick="copyPrompt('s2p0-prompt', this)">複製</button>
         </div>
-        <div class="tip-box" style="margin-top:12px;">💡 日後可上傳：班級輔導計畫、學生觀察記錄、轉介表格範本</div>
       </div>
       <div id="s2p1" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>把日常的觀察筆記輸入給 Gemini，讓它幫你轉成專業的輔導記錄格式。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>將輔導指引交給 Gemini，針對「小明推擠事件」產出一份格式完整的輔導觀察記錄表。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>開啟 Gemini，描述你觀察到的學生狀況</div>
-          <div class="step-row"><span class="snum">2</span>貼上提示詞，讓 Gemini 產出正式記錄</div>
-          <div class="step-row"><span class="snum">3</span>確認內容後進入 Canvas 排版</div>
+          <div class="step-row"><span class="snum">1</span>複製實作①中 NotebookLM 產出的輔導記錄撰寫規範</div>
+          <div class="step-row"><span class="snum">2</span>切換至 Gemini，貼上內容</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 Gemini 把事件轉成正式記錄表</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s2p1-prompt">以下是我對這位學生的觀察筆記，請幫我整理成一份正式的輔導觀察記錄，格式包含：觀察日期、行為描述（客觀中立）、情緒狀態、介入方式、後續追蹤計畫。語氣專業但不冷漠，請用繁體中文輸出。</div>
+          <div class="prompt-text" id="s2p1-prompt">我是一位國小班導師，請參考以下我提供的輔導記錄撰寫規範：[貼上 NotebookLM 產出的文字]。現在，請幫我處理「小明今天在下課時因為排隊問題和同學發生推擠，並在事後大哭拒絕溝通」這個學生狀況。請整理成正式的輔導觀察記錄，格式包含「觀察日期」、「行為描述」、「情緒狀態」、「介入方式」、「後續追蹤計畫」，並依照客觀專業用語轉換，以表格方式呈現，語氣客觀中立、專業。</div>
           <button class="copy-btn" onclick="copyPrompt('s2p1-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s2p2" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 把輔導記錄排版成標準表格，方便存檔與呈報。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 將輔導記錄排版成可列印存檔的專業版面，需手填欄位用粗體標示。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕</div>
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕開啟畫布模式</div>
           <div class="step-row"><span class="snum">2</span>輸入排版提示詞</div>
-          <div class="step-row"><span class="snum">3</span>確認後複製貼入學校輔導系統或 Word 存檔</div>
+          <div class="step-row"><span class="snum">3</span>直接在 Canvas 修改情緒關鍵字、介入細節後列印或存檔</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s2p2-prompt">請將上方輔導記錄排版成標準表格格式，欄位包含：學生姓名（可留空）、觀察日期、行為描述、情緒狀態、介入方式、後續追蹤、教師簽名欄，整體格式清晰，適合列印存檔。</div>
+          <div class="prompt-text" id="s2p2-prompt">請在 Canvas 畫布中，將剛剛生成的輔導觀察記錄草稿進行排版。請使用專業且具隱私感的公文書件排版風格，在每個區塊標題加上合適的 Emoji（如 📅 觀察日期、👀 行為描述、❤️ 情緒狀態、🤝 介入方式、🔍 後續追蹤計畫），並將需要我手動填寫的變數（如 [學生姓名]、[具體時間]）用粗體標示，請確保全部以繁體中文呈現。</div>
           <button class="copy-btn" onclick="copyPrompt('s2p2-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s2p3" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立「輔導記錄助手」，隨手記下觀察就能自動轉成正式記錄。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立掛載輔導規範知識庫的專屬 Gem，未來描述任何學生狀況都能自動產出專業記錄。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 Gemini → Gem 管理員 → 建立新 Gem</div>
-          <div class="step-row"><span class="snum">2</span>貼上下方設定提示詞，命名為「輔導記錄助手」</div>
-          <div class="step-row"><span class="snum">3</span>儲存後，直接描述學生狀況即可產出記錄</div>
+          <div class="step-row"><span class="snum">1</span>前往 Gemini 左側「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>在「知識來源」匯入實作①的 NotebookLM 筆記本</div>
+          <div class="step-row"><span class="snum">3</span>貼上下方角色設定，命名後儲存，用測試指令驗證</div>
         </div>
-        <div class="prompt-label">📋 Gem 設定提示詞（複製使用）</div>
+        <div class="prompt-label">📋 Gem 角色設定（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s2p3-prompt">你是一位熟悉台灣國小輔導工作的記錄撰寫助手。當我描述一位學生的狀況或行為觀察時，請幫我整理成正式的輔導觀察記錄，格式包含觀察日期、行為描述、情緒狀態、介入方式、後續追蹤計畫，語氣客觀中立、專業，所有內容用繁體中文輸出。</div>
+          <div class="prompt-text" id="s2p3-prompt">【名稱】班導師輔導記錄助手
+【角色說明】你是一位熟悉台灣國小輔導工作的記錄撰寫助手。當我描述一位學生的狀況或行為觀察時，請務必參考掛載的 NotebookLM 資料庫中的專業指引，幫我整理成正式的輔導觀察記錄。格式需包含：觀察日期、行為描述、情緒狀態、介入方式、後續追蹤計畫。確保用語客觀、沒有主觀批判。語氣客觀中立、專業、具備教育同理心，所有內容請用繁體中文輸出。
+【測試指令】今天早自習時，小華突然撕掉自己的聯絡簿，把桌上的彩色筆全部掃到地上，然後趴著不說話。我過去安撫他，他只是一直搖頭。請幫我生成這筆輔導記錄草稿。</div>
           <button class="copy-btn" onclick="copyPrompt('s2p3-prompt', this)">複製</button>
         </div>
       </div>
@@ -642,67 +717,68 @@
       <span style="font-size:32px;">🔬</span>
       <div>
         <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 03 · 自然科老師</p>
-        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">素養題出題工具</h2>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">打造「自然科出題助手」</h2>
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;">
-      <button onclick="s3show(0)" id="s3t0" class="stab stab-active">① NotebookLM</button>
-      <button onclick="s3show(1)" id="s3t1" class="stab">② Gemini</button>
+      <button onclick="s3show(0)" id="s3t0" class="stab stab-active">① 精準萃取</button>
+      <button onclick="s3show(1)" id="s3t1" class="stab">② 神連動生成</button>
       <button onclick="s3show(2)" id="s3t2" class="stab">③ Canvas 排版</button>
       <button onclick="s3show(3)" id="s3t3" class="stab">④ 建立 Gem</button>
     </div>
-    <div style="width:100%;flex:1;">
+    <div style="width:100%;flex:1;overflow-y:auto;">
       <div id="s3p0" class="spanel">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立自然科課綱與命題示例的知識庫，讓 AI 出題時有所依據。</div>
-        <div class="src-box">📁 <strong>資料來源：</strong>現場直接貼入網址，或搜尋後貼上找到的頁面連結。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 整理自然科課綱與素養命題原則，解決課綱繁雜、缺乏命題靈感的痛點。</div>
+        <div class="src-box">📁 <strong>建議資料來源：</strong>搜尋「12年國教自然科學領域課程綱要」、「國小自然科素養導向試題範例」、「各版本教師手冊單元目標」等網址或 PDF。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立「自然科出題知識庫」筆記本</div>
-          <div class="step-row"><span class="snum">2</span>貼入以下其中一個網址：<br><span style="color:var(--accent-2);font-size:13px;margin-left:8px;">· 翰林／康軒官網教材公開預覽頁　· 教育部自然科課綱說明頁　· 國教院素養導向命題示例頁</span></div>
-          <div class="step-row"><span class="snum">3</span>輸入提示詞，請 AI 整理該單元的核心概念與知識點</div>
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立新筆記本，命名為「國小自然科課綱與素養命題知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上網址或上傳 PDF</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 AI 整理 Bloom 層次的命題原則</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s3p0-prompt">請整理這份資料中關於「生態系與食物鏈」單元的核心概念，條列出重要知識點、容易混淆的概念、以及適合出題的重點，並標示對應的 Bloom 認知層次（記憶、理解、應用、分析、評鑑）。</div>
+          <div class="prompt-text" id="s3p0-prompt">請根據匯入的課綱與試題範例資料，整理出國小自然科「素養導向情境題」與「基礎記憶題」的標準命題原則。請特別依據 Bloom 認知層次分類，列出各層次的常見提問動詞與情境設計技巧，並確保重點結構化，請務必以繁體中文條列式輸出。</div>
           <button class="copy-btn" onclick="copyPrompt('s3p0-prompt', this)">複製</button>
         </div>
-        <div class="tip-box" style="margin-top:12px;">💡 日後可上傳：教科書章節 PDF、歷年試題、雙向細目分析表</div>
       </div>
       <div id="s3p1" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>把知識庫重點傳給 Gemini，讓它依 Bloom 層次出一份完整素養考卷。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>將命題原則交給 Gemini，針對「五年級美麗的星空」單元產出含解析的完整雙向細目測驗卷。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>複製 NotebookLM 整理的知識點摘要</div>
-          <div class="step-row"><span class="snum">2</span>開啟 Gemini，貼上摘要後輸入提示詞</div>
-          <div class="step-row"><span class="snum">3</span>讓 Gemini 產出完整考題，確認後進入 Canvas 排版</div>
+          <div class="step-row"><span class="snum">1</span>複製實作①中 NotebookLM 產出的命題原則</div>
+          <div class="step-row"><span class="snum">2</span>切換至 Gemini，貼上內容</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 Gemini 依 Bloom 層次產出考卷與解析</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s3p1-prompt">以下是六年級自然科「生態系」單元的重點知識，請依照 Bloom 認知層次幫我出一份期中考卷，共 100 分，題型包含：選擇題（40分）、是非題（20分）、填充題（20分）、素養導向題組（20分），素養題請結合生活情境，請用繁體中文輸出。</div>
+          <div class="prompt-text" id="s3p1-prompt">我是一位國小自然老師，請參考以下我提供的自然科素養命題原則：[貼上 NotebookLM 產出的文字]。現在，請幫我出「五年級下學期：美麗的星空」這個單元的平時測驗卷，總分 100 分，包含「選擇題（基礎記憶）」與「題組題（素養導向情境題）」。請依照 Bloom 認知層次出題，以表格呈現「題號」、「題目與選項」、「標準答案」、「Bloom 認知層次」及「測驗目標（課綱精神）」，語氣符合國小高年級學生閱讀理解程度。</div>
           <button class="copy-btn" onclick="copyPrompt('s3p1-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s3p2" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 把考題排版成可直接列印的標準試卷格式。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 將試題排版成可直接列印的精美試卷，需填寫的欄位用粗體標示。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕</div>
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕開啟畫布模式</div>
           <div class="step-row"><span class="snum">2</span>輸入排版提示詞</div>
-          <div class="step-row"><span class="snum">3</span>確認格式後匯出或複製貼入 Word</div>
+          <div class="step-row"><span class="snum">3</span>在 Canvas 中直接修改題意、選項誘答力，完成後匯出</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s3p2-prompt">請將上方考題排版成標準試卷格式：標題含科目、年級、日期、班級姓名欄；各大題有說明、分隔線；選擇題四選一格式清楚；素養題組文章在前、題目在後；總分 100 分標示清楚，適合 A4 列印。</div>
+          <div class="prompt-text" id="s3p2-prompt">請在 Canvas 畫布中，將剛剛生成的自然科單元測驗卷草稿進行排版。請使用清晰、適合國小學生閱讀的試卷排版風格，在不同題型的區塊標題加上合適的 Emoji（如 🧠 基礎選擇題、🌍 生活素養題組、💡 解答與解析），並將需要我手動填寫的變數（如 [每題配分]、[學校名稱]、[考試時間]）用粗體標示，請確保全部以繁體中文呈現。</div>
           <button class="copy-btn" onclick="copyPrompt('s3p2-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s3p3" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立「自然科出題助手」，下次換單元只要說一句話就能快速出卷。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立掛載課綱知識庫的專屬 Gem，未來只要說單元名稱就能快速出一份符合課綱的完整考卷。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 Gemini → Gem 管理員 → 建立新 Gem</div>
-          <div class="step-row"><span class="snum">2</span>貼上下方設定提示詞，命名為「自然科出題助手」</div>
-          <div class="step-row"><span class="snum">3</span>之後只要說「第三單元、出 50 分、含素養題」就能出卷</div>
+          <div class="step-row"><span class="snum">1</span>前往 Gemini 左側「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>在「知識來源」匯入實作①的 NotebookLM 筆記本</div>
+          <div class="step-row"><span class="snum">3</span>貼上下方角色設定，命名後儲存，用測試指令驗證</div>
         </div>
-        <div class="prompt-label">📋 Gem 設定提示詞（複製使用）</div>
+        <div class="prompt-label">📋 Gem 角色設定（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s3p3-prompt">你是一位熟悉台灣國小自然科課綱的專業出題助手。當我告訴你單元名稱、年級、總分和題型需求時，請依照 Bloom 認知層次出題，包含基礎記憶題和素養導向情境題，所有題目符合 108 課綱精神，請用繁體中文輸出。</div>
+          <div class="prompt-text" id="s3p3-prompt">【名稱】國小自然科出題助手
+【角色說明】你是一位熟悉台灣國小自然科 108 課綱的專業出題助手。當我告訴你單元名稱、年級、總分和題型需求時，請務必參考掛載的 NotebookLM 資料庫中的原則，依照 Bloom 認知層次出題，必須包含基礎記憶題和素養導向情境題，確保題目符合 108 課綱探究與實作精神。語氣嚴謹專業，所有題目請用繁體中文輸出。
+【測試指令】下週要考四年級「奇妙的水」單元。請幫我出兩題結合日常生活中「毛細現象」與「連通管原理」的素養導向情境題組，難度中等，並附上詳盡的解答與認知層次解析。</div>
           <button class="copy-btn" onclick="copyPrompt('s3p3-prompt', this)">複製</button>
         </div>
       </div>
@@ -715,67 +791,68 @@
       <span style="font-size:32px;">📖</span>
       <div>
         <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 04 · 語文科老師</p>
-        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">閱讀理解題組設計</h2>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">打造「閱讀理解題指引專家」</h2>
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;">
-      <button onclick="s4show(0)" id="s4t0" class="stab stab-active">① NotebookLM</button>
-      <button onclick="s4show(1)" id="s4t1" class="stab">② Gemini</button>
+      <button onclick="s4show(0)" id="s4t0" class="stab stab-active">① 精準萃取</button>
+      <button onclick="s4show(1)" id="s4t1" class="stab">② 神連動生成</button>
       <button onclick="s4show(2)" id="s4t2" class="stab">③ Canvas 排版</button>
       <button onclick="s4show(3)" id="s4t3" class="stab">④ 建立 Gem</button>
     </div>
-    <div style="width:100%;flex:1;">
+    <div style="width:100%;flex:1;overflow-y:auto;">
       <div id="s4p0" class="spanel">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立閱讀素養與題型架構的知識庫，讓出題更有層次。</div>
-        <div class="src-box">📁 <strong>資料來源：</strong>現場直接貼入網址，或搜尋後貼上找到的頁面連結。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 整理 PIRLS 四個閱讀理解層次的提問架構，解決難以快速對應文本設計提問的痛點。</div>
+        <div class="src-box">📁 <strong>建議資料來源：</strong>搜尋「PIRLS 國際閱讀素養評量架構」、「108 課綱國語文領域綱要」、「閱讀理解問思教學手冊」等網址或 PDF。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立「語文閱讀出題庫」筆記本</div>
-          <div class="step-row"><span class="snum">2</span>貼入以下其中一個網址：<br><span style="color:var(--accent-2);font-size:13px;margin-left:8px;">· 教育部國語文課綱閱讀素養說明頁　· 國語日報公開文章頁面　· 國教院 PIRLS 閱讀理解題型說明頁</span></div>
-          <div class="step-row"><span class="snum">3</span>輸入提示詞，請 AI 整理閱讀理解題型架構</div>
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立新筆記本，命名為「PIRLS 閱讀素養與提問策略知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上網址或上傳 PDF</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 AI 整理四個層次的提問起手式</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s4p0-prompt">請整理這份資料中關於閱讀理解題型的分類架構，說明「字詞理解、段落大意、推論思考、評鑑創意」四個層次各自的特徵與出題方式，並各給我一個題目範例，適合國小五年級學生。</div>
+          <div class="prompt-text" id="s4p0-prompt">請根據匯入的資料，詳細整理出 PIRLS 閱讀理解的四個層次（直接提取、直接推論、詮釋整合、比較評估）的具體定義。請為每個層次列出 3-5 個適合國小學生的「提問起手式」與「引導關鍵字」，請務必以繁體中文條列式輸出，並將重點結構化。</div>
           <button class="copy-btn" onclick="copyPrompt('s4p0-prompt', this)">複製</button>
         </div>
-        <div class="tip-box" style="margin-top:12px;">💡 日後可上傳：課本文章 PDF、自選新聞文本、學生習作範本</div>
       </div>
       <div id="s4p1" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>貼入任何文章，讓 Gemini 依三個層次自動設計完整閱讀題組。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>將 PIRLS 提問框架交給 Gemini，針對一篇課文產出涵蓋四個層次的完整閱讀理解題組。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>複製一篇文章（課文、新聞、課外讀物均可）</div>
-          <div class="step-row"><span class="snum">2</span>開啟 Gemini，貼上文章後輸入提示詞</div>
-          <div class="step-row"><span class="snum">3</span>確認題目後進入 Canvas 排版成學習單</div>
+          <div class="step-row"><span class="snum">1</span>複製實作①中 NotebookLM 產出的 PIRLS 提問框架</div>
+          <div class="step-row"><span class="snum">2</span>切換至 Gemini，貼上框架後再貼上一段課文或短文</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 Gemini 產出四層次題組與引導建議</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s4p1-prompt">以下是一篇文章，請幫我設計一份閱讀理解題組，共 10 題，分三個層次：字詞理解（3題）、段落大意與文意推論（4題）、評鑑與延伸思考（3題），適合國小五年級學生，請用繁體中文輸出，並在每題後標示所屬層次。</div>
+          <div class="prompt-text" id="s4p1-prompt">我是一位國小語文科老師，請參考以下我提供的 PIRLS 閱讀理解提問框架：[貼上 NotebookLM 產出的文字]。現在，請針對以下這段文本：[貼上一段課文或短文]，為「四年級」學生設計 4 題閱讀理解題，涵蓋直接提取、直接推論、詮釋整合、比較評估四個層次各一題。請以表格呈現「題號」、「PIRLS 層次」、「題目設計」、「參考解答」及「給老師的引導建議」，用語符合四年級學生的理解程度。</div>
           <button class="copy-btn" onclick="copyPrompt('s4p1-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s4p2" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 把題組排版成完整學習單，文章在前、題目在後，可直接發給學生。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 將提問表格排版成活潑清晰的學習單，可直接發給學生使用。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕</div>
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕開啟畫布模式</div>
           <div class="step-row"><span class="snum">2</span>輸入排版提示詞</div>
-          <div class="step-row"><span class="snum">3</span>確認格式後列印或存成 PDF 發給學生</div>
+          <div class="step-row"><span class="snum">3</span>在 Canvas 中直接修改題目難易度、抽換文本段落後列印</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s4p2-prompt">請將上方內容排版成閱讀理解學習單：上方放文章全文（含標題、作者）、下方放題目，題目依層次分三大區塊，每題有作答橫線，版面清晰，適合 A4 列印，右上角留學生姓名與日期欄位。</div>
+          <div class="prompt-text" id="s4p2-prompt">請在 Canvas 畫布中，將剛剛生成的閱讀理解提問表格進行排版。請使用適合國小學習單的清晰活潑風格，在各個閱讀層次的標題加上合適的 Emoji（如 🔍 直接提取、🕵️ 直接推論、🧩 詮釋整合、⚖️ 比較評估），並將需要我手動填寫的變數（如 [班級]、[座號]、[姓名]、[總得分]）用粗體標示在頂部，請確保全部以繁體中文呈現。</div>
           <button class="copy-btn" onclick="copyPrompt('s4p2-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s4p3" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立「語文出題助手」，貼入任何文章就能自動出三層次題組。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立掛載 PIRLS 知識庫的專屬 Gem，貼入任何文章就能自動出涵蓋四個層次的完整題組。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 Gemini → Gem 管理員 → 建立新 Gem</div>
-          <div class="step-row"><span class="snum">2</span>貼上下方設定提示詞，命名為「語文出題助手」</div>
-          <div class="step-row"><span class="snum">3</span>之後貼入任何文章，指定年級與題數就能出題</div>
+          <div class="step-row"><span class="snum">1</span>前往 Gemini 左側「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>在「知識來源」匯入實作①的 NotebookLM 筆記本</div>
+          <div class="step-row"><span class="snum">3</span>貼上下方角色設定，命名後儲存，用測試指令驗證</div>
         </div>
-        <div class="prompt-label">📋 Gem 設定提示詞（複製使用）</div>
+        <div class="prompt-label">📋 Gem 角色設定（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s4p3-prompt">你是一位熟悉台灣國小語文教學的出題助手。當我貼入一篇文章並告訴你年級與題數時，請自動設計分三層次的閱讀理解題組：字詞理解、文意推論、評鑑延伸，每題標示層次，語言淺顯易懂，符合該年級程度，請用繁體中文輸出。</div>
+          <div class="prompt-text" id="s4p3-prompt">【名稱】國小閱讀理解題指引專家
+【角色說明】你是一位熟悉台灣國小語文教學的出題助手。當我貼入一篇文章並告訴你年級與題數時，請務必參考掛載的 NotebookLM 資料庫，自動設計涵蓋 PIRLS 閱讀理解四個層次（直接提取、直接推論、詮釋整合、比較評估）的題組。每題必須標示對應的層次，語言淺顯易懂，完全符合該年級學生的認知程度。語氣專業、清晰、富有教育啟發性，所有內容請用繁體中文輸出。
+【測試指令】這是一篇關於「台灣黑熊保育」的 500 字說明文 [貼上文章]。請幫我為五年級的學生出 8 題閱讀理解測驗，每個層次各 2 題，並附上詳解。</div>
           <button class="copy-btn" onclick="copyPrompt('s4p3-prompt', this)">複製</button>
         </div>
       </div>
@@ -788,67 +865,68 @@
       <span style="font-size:32px;">🏃</span>
       <div>
         <p style="font-size:11px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 05 · 體育老師</p>
-        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">體適能教學計畫</h2>
+        <h2 style="font-size:28px;font-weight:900;color:var(--accent-1);">打造「體能課程助手」</h2>
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:18px;width:100%;">
-      <button onclick="s5show(0)" id="s5t0" class="stab stab-active">① NotebookLM</button>
-      <button onclick="s5show(1)" id="s5t1" class="stab">② Gemini</button>
+      <button onclick="s5show(0)" id="s5t0" class="stab stab-active">① 精準萃取</button>
+      <button onclick="s5show(1)" id="s5t1" class="stab">② 神連動生成</button>
       <button onclick="s5show(2)" id="s5t2" class="stab">③ Canvas 排版</button>
       <button onclick="s5show(3)" id="s5t3" class="stab">④ 建立 Gem</button>
     </div>
-    <div style="width:100%;flex:1;">
+    <div style="width:100%;flex:1;overflow-y:auto;">
       <div id="s5p0" class="spanel">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立體適能常模與教學資源知識庫，讓課程設計有數據依據。</div>
-        <div class="src-box">📁 <strong>資料來源：</strong>現場直接貼入網址，或搜尋後貼上找到的頁面連結。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>讓 NotebookLM 整理體育課綱與體能發展指標，解決各年級教案散落各處、備課費時的痛點。</div>
+        <div class="src-box">📁 <strong>建議資料來源：</strong>搜尋「十二年國教健康與體育領域課程綱要」、「國小各年級體適能發展指標」、「體育教學趣味遊戲教案集」等網址或 PDF。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立「體適能教學知識庫」筆記本</div>
-          <div class="step-row"><span class="snum">2</span>貼入以下其中一個網址：<br><span style="color:var(--accent-2);font-size:13px;margin-left:8px;">· 教育部體育署學生體適能常模說明頁　· 體育署 FIT 台灣教學資源網　· 搜尋「國小體育教學計畫範本」找到的頁面</span></div>
-          <div class="step-row"><span class="snum">3</span>輸入提示詞，請 AI 整理高年級體能常見弱項</div>
+          <div class="step-row"><span class="snum">1</span>前往 NotebookLM，建立新筆記本，命名為「國小體育課綱與體適能知識庫」</div>
+          <div class="step-row"><span class="snum">2</span>點擊「新增來源」，貼上網址或上傳 PDF</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 AI 整理各年級體能指標與遊戲策略</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s5p0-prompt">請整理這份體適能常模資料，找出國小高年級（五、六年級）學生最常出現的體能弱項，並說明各項體能指標的標準值與改善建議，條列出適合在體育課中訓練這些弱項的活動類型。</div>
+          <div class="prompt-text" id="s5p0-prompt">請根據匯入的資料，整理出國小各年級適用的「體能發展核心指標」、常見的「趣味暖身活動清單」以及「體育教學遊戲化策略」。請務必以繁體中文條列式輸出，並將重點結構化。</div>
           <button class="copy-btn" onclick="copyPrompt('s5p0-prompt', this)">複製</button>
         </div>
-        <div class="tip-box" style="margin-top:12px;">💡 日後可上傳：班級體測紀錄 Excel、學期課程目標文件</div>
       </div>
       <div id="s5p1" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>把體能分析結果傳給 Gemini，設計出有針對性的學期課程進度表。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>將體育課綱策略交給 Gemini，針對「五年級心肺耐力與折返跑」設計一份完整的 40 分鐘教案表。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>複製 NotebookLM 整理的體能弱項分析</div>
-          <div class="step-row"><span class="snum">2</span>開啟 Gemini，貼上分析後輸入提示詞</div>
-          <div class="step-row"><span class="snum">3</span>讓 Gemini 產出 18 週課程進度表，確認後進入 Canvas</div>
+          <div class="step-row"><span class="snum">1</span>複製實作①中 NotebookLM 產出的體育教學指引</div>
+          <div class="step-row"><span class="snum">2</span>切換至 Gemini，貼上內容</div>
+          <div class="step-row"><span class="snum">3</span>輸入提示詞，讓 Gemini 產出含安全注意事項的完整課堂流程</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s5p1-prompt">根據以上高年級體能弱項分析，幫我設計一份 18 週的學期體育課程進度表，每週標示：主要訓練項目、課程活動名稱、對應的體能目標，並融入 108 課綱體育核心素養目標，請用表格格式輸出，繁體中文。</div>
+          <div class="prompt-text" id="s5p1-prompt">我是一位國小體育老師，請參考以下我提供的體育教學指引：[貼上 NotebookLM 產出的文字]。現在，請幫我設計一堂「五年級：心肺耐力與折返跑基礎」的 40 分鐘體育課，包含：暖身活動（5分鐘）、主要教學內容（25分鐘）、教學遊戲或競賽（5分鐘）、緩和與評量（5分鐘）。請以表格呈現各階段的「時間分配」、「活動名稱」、「操作步驟細節」及「安全注意事項」，語氣專業且充滿活力。</div>
           <button class="copy-btn" onclick="copyPrompt('s5p1-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s5p2" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 製作一頁式家長說明單，讓家長了解本學期體育課方向。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>用 Canvas 將教案排版成可帶到操場快速查閱的視覺化教案儀表板。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕</div>
-          <div class="step-row"><span class="snum">2</span>輸入提示詞，製作家長說明單</div>
-          <div class="step-row"><span class="snum">3</span>確認後列印發給家長，或轉成 PDF 上傳學校平台</div>
+          <div class="step-row"><span class="snum">1</span>在 Gemini 對話中點擊「Canvas」按鈕開啟畫布模式</div>
+          <div class="step-row"><span class="snum">2</span>輸入排版提示詞</div>
+          <div class="step-row"><span class="snum">3</span>在 Canvas 中直接微調時間分配、修改遊戲規則後列印</div>
         </div>
         <div class="prompt-label">📋 提示詞（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s5p2-prompt">請根據這份學期體育課程計畫，製作一份給家長的說明單，內容包含：本學期體育課重點方向、孩子在家可以配合的運動建議（每天 10-15 分鐘）、體適能測驗時間說明，語氣親切友善，版面一頁 A4，繁體中文。</div>
+          <div class="prompt-text" id="s5p2-prompt">請在 Canvas 畫布中，將剛剛生成的體育課流程草稿進行排版。請使用充滿活力且版面清晰的教案風格，在各個教學階段加上合適的 Emoji（如 🏃 暖身活動、💪 主要教學內容、🏆 教學遊戲或競賽、🧘 緩和與評量），並將需要我手動調整的變數（如 [上課班級]、[器材準備清單]、[場地安排]）用粗體標示在頂部，請確保全部以繁體中文呈現。</div>
           <button class="copy-btn" onclick="copyPrompt('s5p2-prompt', this)">複製</button>
         </div>
       </div>
       <div id="s5p3" class="spanel" style="display:none;">
-        <div class="goal-box">🎯 <strong>核心目標：</strong>建立「體能課程助手」，輸入任何體能項目就能秒出教學設計。</div>
+        <div class="goal-box">🎯 <strong>核心目標：</strong>建立掛載體育課綱知識庫的專屬 Gem，未來只要說體能項目和年級就能秒出完整教案。</div>
         <div class="steps-list">
-          <div class="step-row"><span class="snum">1</span>前往 Gemini → Gem 管理員 → 建立新 Gem</div>
-          <div class="step-row"><span class="snum">2</span>貼上下方設定提示詞，命名為「體能課程助手」</div>
-          <div class="step-row"><span class="snum">3</span>之後輸入「跑步耐力、40分鐘、五年級」就能出課程</div>
+          <div class="step-row"><span class="snum">1</span>前往 Gemini 左側「Gem 管理員」→「建立新 Gem」</div>
+          <div class="step-row"><span class="snum">2</span>在「知識來源」匯入實作①的 NotebookLM 筆記本</div>
+          <div class="step-row"><span class="snum">3</span>貼上下方角色設定，命名後儲存，用測試指令驗證</div>
         </div>
-        <div class="prompt-label">📋 Gem 設定提示詞（複製使用）</div>
+        <div class="prompt-label">📋 Gem 角色設定（複製使用）</div>
         <div class="prompt-box">
-          <div class="prompt-text" id="s5p3-prompt">你是一位熟悉台灣國小體育教學的課程設計助手。當我告訴你體能項目、課堂時間和年級時，請幫我設計完整的體育課流程，包含：暖身活動（5分鐘）、主要教學內容（25分鐘）、教學遊戲或競賽（5分鐘）、緩和與評量（5分鐘），所有內容請用繁體中文輸出。</div>
+          <div class="prompt-text" id="s5p3-prompt">【名稱】國小體能課程助手
+【角色說明】你是一位熟悉台灣國小體育教學的課程設計助手。當我告訴你體能項目、課堂時間和年級時，請務必參考掛載的 NotebookLM 資料庫，幫我設計完整的體育課流程，包含：暖身活動（5分鐘）、主要教學內容（25分鐘）、教學遊戲或競賽（5分鐘）、緩和與評量（5分鐘）。請確保活動設計符合該年級的體能發展指標，並注重課堂安全。語氣充滿活力、專業，所有內容請用繁體中文輸出。
+【測試指令】下週要幫六年級上 40 分鐘的「校園定向越野基礎體驗」課程。請幫我設計一套完整的體育課流程，包含如何教他們看簡易地圖，並在遊戲競賽階段設計小組趣味打卡挑戰。</div>
           <button class="copy-btn" onclick="copyPrompt('s5p3-prompt', this)">複製</button>
         </div>
       </div>
