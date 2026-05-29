@@ -794,6 +794,53 @@
 <div class="slide-counter" id="slideCounter">1 / 16</div>
 <div class="nav-hint">← → 鍵換頁，或點擊畫面</div>
 
+<!-- 右上角跳頁選單 -->
+<div id="jumpMenu" style="position:fixed;top:16px;right:16px;z-index:200;">
+  <button id="jumpBtn" onclick="toggleMenu()" style="background:rgba(45,106,79,0.9);color:white;border:none;border-radius:10px;padding:8px 16px;font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);backdrop-filter:blur(8px);">
+    ≡ 跳頁
+  </button>
+  <div id="jumpList" style="display:none;position:absolute;top:44px;right:0;background:white;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.15);min-width:220px;overflow:hidden;border:1px solid #E8F4F0;">
+    <div style="background:#2D6A4F;color:white;padding:10px 16px;font-size:12px;font-weight:700;letter-spacing:0.1em;">📑 快速跳頁</div>
+    <div style="max-height:70vh;overflow-y:auto;">
+      <div class="jump-item" onclick="jumpTo(0)">1　封面</div>
+      <div class="jump-item" onclick="jumpTo(1)">2　講師介紹</div>
+      <div class="jump-item" onclick="jumpTo(2)">3　🌥️ 文字雲互動</div>
+      <div class="jump-item" onclick="jumpTo(3)">4　今天的重點</div>
+      <div class="jump-item" onclick="jumpTo(4)">5　AI 神連動概念</div>
+      <div class="jump-item" onclick="jumpTo(5)">6　核心金句</div>
+      <div class="jump-item" onclick="jumpTo(6)">7　神連動 SOP 四步驟</div>
+      <div class="jump-item" onclick="jumpTo(7)">8　五大情境選擇</div>
+      <div style="background:#F0FAF5;padding:6px 16px;font-size:11px;font-weight:700;color:#52B788;letter-spacing:0.1em;">⭐ 情境操作</div>
+      <div class="jump-item" onclick="jumpTo(8)">9　情境① 📋 行政老師</div>
+      <div class="jump-item" onclick="jumpTo(9)">10　情境② 💌 班導師</div>
+      <div class="jump-item" onclick="jumpTo(10)">11　情境③ 🔬 自然科老師</div>
+      <div class="jump-item" onclick="jumpTo(11)">12　情境④ 🗺️ 社會科老師</div>
+      <div class="jump-item" onclick="jumpTo(12)">13　情境⑤ 🏃 體育老師</div>
+      <div style="background:#F0FAF5;padding:6px 16px;font-size:11px;font-weight:700;color:#52B788;letter-spacing:0.1em;">收尾</div>
+      <div class="jump-item" onclick="jumpTo(13)">14　作業說明</div>
+      <div class="jump-item" onclick="jumpTo(14)">15　今天你完成了！</div>
+      <div class="jump-item" onclick="jumpTo(15)">16　結語</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.jump-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #1A1A2E;
+  cursor: pointer;
+  border-bottom: 1px solid #F0FAF5;
+  transition: background 0.15s;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.jump-item:hover {
+  background: #E8F4F0;
+  color: #2D6A4F;
+  font-weight: 700;
+}
+</style>
+
 <script>
   const slides = document.querySelectorAll('.slide');
   let current = 0;
@@ -812,6 +859,23 @@
     document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + slides.length;
   }
 
+  function toggleMenu() {
+    const list = document.getElementById('jumpList');
+    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function jumpTo(n) {
+    goTo(n);
+    document.getElementById('jumpList').style.display = 'none';
+  }
+
+  // 點選其他地方關閉選單
+  document.addEventListener('click', e => {
+    if (!document.getElementById('jumpMenu').contains(e.target)) {
+      document.getElementById('jumpList').style.display = 'none';
+    }
+  });
+
   slides[0].classList.add('active');
   document.getElementById('progressBar').style.width = (1 / slides.length * 100) + '%';
 
@@ -820,7 +884,9 @@
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
   });
 
-  document.getElementById('slidesWrapper').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('slidesWrapper').addEventListener('click', e => {
+    if (!document.getElementById('jumpMenu').contains(e.target)) goTo(current + 1);
+  });
 </script>
 </body>
 </html>
