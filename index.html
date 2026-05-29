@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第五堂課｜AI之間互相合作（教師版）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #FAFAF7;
+      --bg-slide: #FFFFFF;
+      --accent-1: #2D6A4F;
+      --accent-2: #52B788;
+      --accent-3: #F4A261;
+      --accent-4: #E9C46A;
+      --text-primary: #1A1A2E;
+      --text-secondary: #5C6B73;
+      --border-light: #E8F4F0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg-primary);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .slides-wrapper {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      padding: 50px 70px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    .progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      transition: width 0.4s ease;
+      z-index: 100;
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      z-index: 100;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-hint {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--text-secondary);
+      opacity: 0.6;
+      z-index: 100;
+    }
+
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.08;
+      background: var(--accent-1);
+    }
+
+    .deco-line {
+      width: 60px;
+      height: 4px;
+      background: var(--accent-3);
+      border-radius: 2px;
+      margin: 16px 0;
+    }
+
+    /* 情境卡片 */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .scenario-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 16px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 2px solid var(--border-light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .scenario-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(45,106,79,0.15);
+      border-color: var(--accent-2);
+    }
+
+    .scenario-card .emoji { font-size: 40px; margin-bottom: 12px; }
+    .scenario-card .num { font-size: 11px; color: var(--accent-2); font-weight: 700; letter-spacing: 0.2em; margin-bottom: 6px; }
+    .scenario-card .title { font-size: 15px; font-weight: 700; color: var(--accent-1); line-height: 1.4; }
+
+    /* 步驟表格 */
+    .step-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .step-table th {
+      background: var(--accent-1);
+      color: white;
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .step-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .step-table tr:nth-child(even) td { background: #F7FBF9; }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--accent-1);
+      color: white;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .tag-tool {
+      display: inline-block;
+      background: var(--accent-2);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 4px;
+    }
+
+    .tip-box {
+      background: #FFF8EE;
+      border-left: 4px solid var(--accent-3);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #7A5C2A;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* 四步驟圖示列 */
+    .sop-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      max-width: 900px;
+      justify-content: center;
+    }
+
+    .sop-step {
+      flex: 1;
+      text-align: center;
+      background: white;
+      border-radius: 16px;
+      padding: 24px 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .sop-arrow {
+      font-size: 24px;
+      color: var(--accent-3);
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="slides-wrapper" id="slidesWrapper">
+
+  <!-- 封面 -->
+  <div class="slide" style="background: linear-gradient(135deg, #1A3A2A 0%, #2D6A4F 60%, #52B788 100%); color: white; flex-direction: column; text-align: center;">
+    <div class="deco-circle" style="width:400px;height:400px;top:-100px;right:-100px;background:white;"></div>
+    <div class="deco-circle" style="width:200px;height:200px;bottom:-50px;left:-50px;background:#F4A261;"></div>
+    <div style="position:relative;z-index:1;">
+      <p style="font-family:'Playfair Display';font-size:14px;letter-spacing:0.3em;opacity:0.7;margin-bottom:24px;">TEACHER WORKSHOP · AI TOOLS</p>
+      <h1 style="font-size:48px;font-weight:900;line-height:1.2;margin-bottom:20px;">AI 之間互相合作</h1>
+      <div class="deco-line" style="margin:20px auto;background:#E9C46A;"></div>
+      <p style="font-size:20px;opacity:0.85;margin-bottom:12px;">Gemini × NotebookLM 神連動</p>
+      <p style="font-size:16px;opacity:0.65;">🍎 教師研習版 · 五大教學情境實作</p>
+      <p style="font-size:15px;opacity:0.55;margin-top:16px;">蘇澳國小 · 115年6月3日</p>
+    </div>
+  </div>
+
+  <!-- 講師介紹 -->
+  <div class="slide" style="background:#F0FAF5;">
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:60px;align-items:center;width:100%;max-width:1000px;">
+      <div style="text-align:center;">
+        <div style="width:200px;height:200px;border-radius:50%;overflow:hidden;border:5px solid #52B788;margin:0 auto 20px;box-shadow:0 10px 30px rgba(45,106,79,0.2);">
+          <img src="teacher.png" style="width:100%;height:100%;object-fit:cover;" alt="講師照片">
+        </div>
+        <div style="background:var(--accent-1);color:white;padding:8px 20px;border-radius:20px;display:inline-block;font-size:14px;font-weight:700;">講師介紹</div>
+      </div>
+      <div>
+        <p style="color:var(--accent-2);font-size:14px;letter-spacing:0.2em;margin-bottom:8px;">ABOUT THE INSTRUCTOR</p>
+        <h2 style="font-size:38px;font-weight:900;color:var(--accent-1);margin-bottom:4px;">許凱琳 老師</h2>
+        <p style="color:var(--accent-3);font-weight:700;margin-bottom:20px;">新北市大豐國小 自然教師</p>
+        <div class="deco-line"></div>
+        <ul style="list-style:none;line-height:2;color:var(--text-primary);font-size:15px;margin-top:12px;">
+          <li>🏆 榮獲115年新北市特殊優良教師</li>
+          <li>🏆 榮獲112年新北市 Super師獎</li>
+          <li>🌟 教育部數位學習推動優良案佳作</li>
+          <li>✅ Gemini 認證講師</li>
+          <li>✅ Apple Learning Coach & APLS</li>
+          <li>✅ 教育部B5-1生成式AI工作坊合格講師</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今天的重點 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;justify-content:center;">
+    <div style="width:100%;max-width:900px;">
+      <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:8px;">TODAY'S AGENDA</p>
+      <h2 style="font-size:42px;font-weight:900;color:var(--accent-1);margin-bottom:6px;">這堂課要學什麼？</h2>
+      <div class="deco-line"></div>
+      <ul style="list-style:none;margin-top:28px;display:flex;flex-direction:column;gap:20px;">
+        <li style="display:flex;align-items:flex-start;gap:20px;">
+          <span class="step-num">1</span>
+          <div><p style="font-size:20px;font-weight:700;color:var(--accent-1);">AI 可以互相合作</p><p style="font-size:15px;color:var(--text-secondary);margin-top:4px;">NotebookLM × Gemini 各司其職</p></div>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:20px;">
+          <span class="step-num">2</span>
+          <div><p style="font-size:20px;font-weight:700;color:var(--accent-1);">五大教學情境實作</p><p style="font-size:15px;color:var(--text-secondary);margin-top:4px;">行政 / 導師 / 自然 / 社會 / 體育</p></div>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:20px;">
+          <span class="step-num">3</span>
+          <div><p style="font-size:20px;font-weight:700;color:var(--accent-1);">成果上傳 Padlet 分享</p><p style="font-size:15px;color:var(--text-secondary);margin-top:4px;">帶走你的 AI 作品</p></div>
+        </li>
+      </ul>
+      <div style="margin-top:36px;background:var(--bg-primary);border-radius:12px;padding:16px 24px;font-size:15px;color:var(--accent-1);font-weight:700;">
+        👉 AI 不只是聊天，而是開始一起工作
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 神連動概念 -->
+  <div class="slide" style="background:var(--bg-primary);flex-direction:column;text-align:center;">
+    <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:16px;">CONCEPT</p>
+    <h2 style="font-size:42px;font-weight:900;color:var(--accent-1);margin-bottom:8px;">什麼是 AI 神連動？</h2>
+    <div class="deco-line" style="margin:16px auto 40px;"></div>
+    <div style="display:flex;gap:40px;align-items:center;justify-content:center;flex-wrap:wrap;">
+      <div style="background:white;border-radius:20px;padding:40px 48px;box-shadow:0 8px 30px rgba(0,0,0,0.08);text-align:center;min-width:220px;">
+        <div style="font-size:48px;margin-bottom:16px;">🧠</div>
+        <p style="font-size:22px;font-weight:900;color:var(--accent-1);margin-bottom:12px;">NotebookLM</p>
+        <p style="font-size:13px;font-weight:700;color:var(--accent-2);letter-spacing:0.1em;margin-bottom:12px;">AI 的大腦</p>
+        <ul style="list-style:none;font-size:14px;color:var(--text-secondary);line-height:2;">
+          <li>📥 整理資料</li>
+          <li>💾 記住內容</li>
+          <li>🗂️ 建立知識庫</li>
+        </ul>
+      </div>
+      <div style="font-size:48px;color:var(--accent-3);font-weight:900;">×</div>
+      <div style="background:white;border-radius:20px;padding:40px 48px;box-shadow:0 8px 30px rgba(0,0,0,0.08);text-align:center;min-width:220px;">
+        <div style="font-size:48px;margin-bottom:16px;">🤖</div>
+        <p style="font-size:22px;font-weight:900;color:var(--accent-1);margin-bottom:12px;">Gemini</p>
+        <p style="font-size:13px;font-weight:700;color:var(--accent-2);letter-spacing:0.1em;margin-bottom:12px;">AI 的執行者</p>
+        <ul style="list-style:none;font-size:14px;color:var(--text-secondary);line-height:2;">
+          <li>✍️ 幫你生成內容</li>
+          <li>📋 幫你完成任務</li>
+          <li>🎨 Canvas 排版</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心金句 -->
+  <div class="slide" style="background:var(--bg-primary);flex-direction:column;text-align:center;">
+    <div style="background:white;border-radius:24px;padding:60px 80px;box-shadow:0 20px 60px rgba(0,0,0,0.06);max-width:800px;width:100%;">
+      <p style="font-size:18px;color:var(--text-secondary);margin-bottom:24px;">🔑 核心概念</p>
+      <h2 style="font-size:44px;font-weight:900;color:var(--accent-1);line-height:1.4;">NotebookLM 負責記憶<br>Gemini 負責做事</h2>
+      <div class="deco-line" style="margin:24px auto;"></div>
+      <p style="font-size:18px;color:var(--text-secondary);">兩個 AI 各司其職，搭配使用，效果翻倍</p>
+      <p style="font-size:16px;color:var(--accent-3);margin-top:20px;font-weight:700;">👨‍🏫 老師的知識庫 + AI 的執行力 = 你的超級助教</p>
+    </div>
+  </div>
+
+  <!-- 四步驟 SOP -->
+  <div class="slide" style="background:white;flex-direction:column;text-align:center;">
+    <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:16px;">WORKFLOW</p>
+    <h2 style="font-size:38px;font-weight:900;color:var(--accent-1);margin-bottom:8px;">神連動 SOP — 四步驟</h2>
+    <div class="deco-line" style="margin:16px auto 36px;"></div>
+    <div class="sop-row">
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">📥</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);letter-spacing:0.15em;margin-bottom:8px;">步驟 ①</p>
+        <p style="font-size:16px;font-weight:700;color:var(--accent-1);">NotebookLM</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">建立教學知識庫</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">⚡</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);letter-spacing:0.15em;margin-bottom:8px;">步驟 ②</p>
+        <p style="font-size:16px;font-weight:700;color:var(--accent-1);">Gemini</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">神連動生成內容</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">🎨</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);letter-spacing:0.15em;margin-bottom:8px;">步驟 ③</p>
+        <p style="font-size:16px;font-weight:700;color:var(--accent-1);">Canvas</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">一頁式視覺排版</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">🤖</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);letter-spacing:0.15em;margin-bottom:8px;">步驟 ④</p>
+        <p style="font-size:16px;font-weight:700;color:var(--accent-1);">Gem</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">專屬AI助手上線</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 五大情境選擇 -->
+  <div class="slide" style="background:var(--bg-primary);flex-direction:column;text-align:center;">
+    <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:16px;">CHOOSE YOUR SCENARIO</p>
+    <h2 style="font-size:38px;font-weight:900;color:var(--accent-1);margin-bottom:8px;">五大教學情境選擇</h2>
+    <div class="deco-line" style="margin:16px auto 32px;"></div>
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <div class="emoji">📋</div>
+        <div class="num">01</div>
+        <div class="title">行政老師<br>課程計畫書製作</div>
+      </div>
+      <div class="scenario-card">
+        <div class="emoji">💌</div>
+        <div class="num">02</div>
+        <div class="title">班導師<br>家長溝通助手</div>
+      </div>
+      <div class="scenario-card">
+        <div class="emoji">🔬</div>
+        <div class="num">03</div>
+        <div class="title">自然科老師<br>素養題出題工具</div>
+      </div>
+      <div class="scenario-card">
+        <div class="emoji">🗺️</div>
+        <div class="num">04</div>
+        <div class="title">社會科老師<br>議題探究課設計</div>
+      </div>
+      <div class="scenario-card">
+        <div class="emoji">🏃</div>
+        <div class="num">05</div>
+        <div class="title">體育老師<br>體適能教學計畫</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-top:24px;">💡 每個情境都包含完整四步驟，現場可直接跟著操作！</p>
+  </div>
+
+  <!-- 情境① 行政老師 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:1000px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+        <span style="font-size:36px;">📋</span>
+        <div>
+          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 01 · 行政老師</p>
+          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">課程計畫書製作</h2>
+        </div>
+      </div>
+      <div class="deco-line"></div>
+      <table class="step-table" style="margin-top:20px;">
+        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
+        <tr>
+          <td><span class="step-num">①</span></td>
+          <td><span class="tag-tool">NotebookLM</span></td>
+          <td>
+            現場直接貼入網址：<br>
+            · 教育部國民小學課程綱要官網<br>
+            · 學校官網的校務計畫頁面<br>
+            · Google 搜尋「112課綱課程計畫範本」找到的範例頁面
+            <div class="tip-box">💡 日後可上傳：去年課程計畫書 PDF、學校願景文件</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="step-num">②</span></td>
+          <td><span class="tag-tool">Gemini</span></td>
+          <td>提示語：「請根據這份知識庫，幫我更新今年的課程計畫書，加入 AI 融入教學的說明，並對齊 112 課綱素養目標」</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">③</span></td>
+          <td><span class="tag-tool">Canvas</span></td>
+          <td>排版成可直接送審格式（分點說明、表格對齊）</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">④</span></td>
+          <td><span class="tag-tool">Gem</span></td>
+          <td>建立「課程計畫助手」，每次修改計畫書直接對話，不需重新上傳資料</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 情境② 班導師 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:1000px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+        <span style="font-size:36px;">💌</span>
+        <div>
+          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 02 · 班導師（高年級）</p>
+          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">家長溝通助手</h2>
+        </div>
+      </div>
+      <div class="deco-line"></div>
+      <table class="step-table" style="margin-top:20px;">
+        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
+        <tr>
+          <td><span class="step-num">①</span></td>
+          <td><span class="tag-tool">NotebookLM</span></td>
+          <td>
+            現場直接貼入網址：<br>
+            · 教育部《校園霸凌防制準則》官方說明頁<br>
+            · 搜尋「親師溝通技巧」找到的教育期刊文章<br>
+            · 新北市教育局「親師合作」相關說明頁
+            <div class="tip-box">💡 日後可上傳：班規、生活公約、學期活動表、常用家長聯絡範本</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="step-num">②</span></td>
+          <td><span class="tag-tool">Gemini</span></td>
+          <td>提示語：「今天有學生在班上發生衝突，對方家長明天會來，請幫我草擬一份給雙方家長的 Line 訊息，語氣要中立、有誠意」</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">③</span></td>
+          <td><span class="tag-tool">Canvas</span></td>
+          <td>排版成正式家長聯絡書格式（含日期、事件說明、後續處置、老師署名）</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">④</span></td>
+          <td><span class="tag-tool">Gem</span></td>
+          <td>建立「班導師溝通助手」，隨時輸入事件 → 秒出訊息草稿</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 情境③ 自然科 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:1000px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+        <span style="font-size:36px;">🔬</span>
+        <div>
+          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 03 · 自然科老師</p>
+          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">素養題出題工具</h2>
+        </div>
+      </div>
+      <div class="deco-line"></div>
+      <table class="step-table" style="margin-top:20px;">
+        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
+        <tr>
+          <td><span class="step-num">①</span></td>
+          <td><span class="tag-tool">NotebookLM</span></td>
+          <td>
+            現場直接貼入網址：<br>
+            · 翰林／康軒出版社官網線上教材公開預覽頁<br>
+            · 教育部自然科課綱說明頁<br>
+            · 國教院「素養導向命題示例」PDF 連結
+            <div class="tip-box">💡 日後可上傳：教科書章節 PDF、歷年試題、雙向細目分析表</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="step-num">②</span></td>
+          <td><span class="tag-tool">Gemini</span></td>
+          <td>提示語：「請依照 Bloom 認知層次，從記憶到評鑑，幫我出一份包含素養導向題組的六年級自然科期中考卷，共 100 分」</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">③</span></td>
+          <td><span class="tag-tool">Canvas</span></td>
+          <td>排版成標準試卷格式，含題號、作答欄、配分標示，可直接列印</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">④</span></td>
+          <td><span class="tag-tool">Gem</span></td>
+          <td>建立「自然科出題助手」，下次換單元只要說「換第三單元、出 50 分」就能快速出卷</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 情境④ 社會科 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:1000px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+        <span style="font-size:36px;">🗺️</span>
+        <div>
+          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 04 · 社會科老師</p>
+          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">議題探究課設計</h2>
+        </div>
+      </div>
+      <div class="deco-line"></div>
+      <table class="step-table" style="margin-top:20px;">
+        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
+        <tr>
+          <td><span class="step-num">①</span></td>
+          <td><span class="tag-tool">NotebookLM</span></td>
+          <td>
+            現場直接貼入網址：<br>
+            · 公視新聞或天下雜誌相關議題報導（如：水資源、氣候、城鄉差距）<br>
+            · 維基百科對應議題中文條目頁面<br>
+            · 國教院或教育部議題融入課綱說明頁
+            <div class="tip-box">💡 日後可上傳：自選新聞報導、地圖資料、政策說明文件</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="step-num">②</span></td>
+          <td><span class="tag-tool">Gemini</span></td>
+          <td>提示語：「請幫我設計一份適合五年級的 PBL 探究任務單，主題是台灣水資源分布，包含核心問題、任務分工、探究步驟與評量規準」</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">③</span></td>
+          <td><span class="tag-tool">Canvas</span></td>
+          <td>排版成可發給學生的任務單，含引導問題、小組分工表、成果呈現說明</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">④</span></td>
+          <td><span class="tag-tool">Gem</span></td>
+          <td>建立「議題探究查詢助手」，學生在探究過程中直接向 Gem 提問，取代漫無目的 Google 搜尋</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 情境⑤ 體育老師 -->
+  <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:1000px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px;">
+        <span style="font-size:36px;">🏃</span>
+        <div>
+          <p style="font-size:12px;color:var(--accent-2);font-weight:700;letter-spacing:0.2em;">情境 05 · 體育老師</p>
+          <h2 style="font-size:32px;font-weight:900;color:var(--accent-1);">體適能教學計畫</h2>
+        </div>
+      </div>
+      <div class="deco-line"></div>
+      <table class="step-table" style="margin-top:20px;">
+        <tr><th style="width:100px;">步驟</th><th style="width:140px;">工具</th><th>你要做什麼</th></tr>
+        <tr>
+          <td><span class="step-num">①</span></td>
+          <td><span class="tag-tool">NotebookLM</span></td>
+          <td>
+            現場直接貼入網址：<br>
+            · 教育部體育署「學生體適能常模」官方說明頁<br>
+            · 體育署「FIT 台灣」體適能教學資源網<br>
+            · 搜尋「國小體育教學計畫範本」找到的學校公開範例
+            <div class="tip-box">💡 日後可上傳：班級體測紀錄 Excel、學期課程目標文件</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="step-num">②</span></td>
+          <td><span class="tag-tool">Gemini</span></td>
+          <td>提示語：「根據體適能常模，幫我找出小學高年級常見的體能弱項，並設計一份 18 週的學期體育課程進度表，融入核心素養目標」</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">③</span></td>
+          <td><span class="tag-tool">Canvas</span></td>
+          <td>製作一頁式家長說明單，說明本學期體育課方向與孩子在家可配合的運動建議</td>
+        </tr>
+        <tr>
+          <td><span class="step-num">④</span></td>
+          <td><span class="tag-tool">Gem</span></td>
+          <td>建立「體能課程助手」，輸入任何體能項目 → 秒出暖身設計、教學遊戲、評量方式</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 作業說明 -->
+  <div class="slide" style="background:var(--bg-primary);flex-direction:column;align-items:flex-start;">
+    <div style="width:100%;max-width:800px;">
+      <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:8px;">ASSIGNMENT</p>
+      <h2 style="font-size:38px;font-weight:900;color:var(--accent-1);margin-bottom:6px;">作業說明 ✍️</h2>
+      <div class="deco-line"></div>
+      <div style="background:white;border-radius:16px;padding:32px;box-shadow:0 8px 30px rgba(0,0,0,0.06);margin-top:24px;">
+        <p style="font-size:18px;font-weight:700;color:var(--accent-1);margin-bottom:20px;">📋 今天的作業</p>
+        <p style="font-size:16px;color:var(--text-primary);line-height:1.8;margin-bottom:20px;">完成任一情境的實作截圖，<strong>或</strong>上傳你製作的 <strong>GEM 專家連結</strong>，上傳至 Padlet。</p>
+        <div style="background:var(--bg-primary);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+          <p style="font-weight:700;color:var(--accent-1);margin-bottom:12px;">上傳格式</p>
+          <p style="font-size:15px;color:var(--text-primary);line-height:2;">① 說明你上傳的內容是什麼情境？<br>② 你想在哪一個教學場合中使用？</p>
+        </div>
+        <div style="background:var(--bg-primary);border-radius:12px;padding:20px 24px;">
+          <p style="font-weight:700;color:var(--accent-1);margin-bottom:12px;">截圖方式</p>
+          <p style="font-size:15px;color:var(--text-primary);">電腦：<code style="background:#E8F4F0;padding:2px 8px;border-radius:4px;">Win + Shift + S</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今天完成了 -->
+  <div class="slide" style="background:white;flex-direction:column;text-align:center;">
+    <p style="color:var(--accent-2);font-size:13px;letter-spacing:0.2em;margin-bottom:16px;">TODAY'S ACHIEVEMENT</p>
+    <h2 style="font-size:42px;font-weight:900;color:var(--accent-1);margin-bottom:8px;">🔥 今天你完成了！</h2>
+    <div class="deco-line" style="margin:16px auto 36px;"></div>
+    <div class="sop-row">
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">📥</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);margin-bottom:8px;">步驟 ①</p>
+        <p style="font-size:15px;font-weight:700;color:var(--accent-1);">NotebookLM</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">建立教學知識庫</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">⚡</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);margin-bottom:8px;">步驟 ②</p>
+        <p style="font-size:15px;font-weight:700;color:var(--accent-1);">Gemini</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">神連動企劃生成</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">🎨</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);margin-bottom:8px;">步驟 ③</p>
+        <p style="font-size:15px;font-weight:700;color:var(--accent-1);">Canvas</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">一頁式視覺排版</p>
+      </div>
+      <div class="sop-arrow">→</div>
+      <div class="sop-step">
+        <div style="font-size:36px;margin-bottom:12px;">🤖</div>
+        <p style="font-size:12px;font-weight:700;color:var(--accent-2);margin-bottom:8px;">步驟 ④</p>
+        <p style="font-size:15px;font-weight:700;color:var(--accent-1);">Gem</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">專屬AI助手上線</p>
+      </div>
+    </div>
+    <p style="font-size:16px;color:var(--accent-1);font-weight:700;margin-top:36px;">👉 AI 開始從「聊天工具」變成你的「教學工作流」</p>
+  </div>
+
+  <!-- 結語 -->
+  <div class="slide" style="background:linear-gradient(135deg,#1A3A2A,#2D6A4F);color:white;flex-direction:column;text-align:center;">
+    <div class="deco-circle" style="width:300px;height:300px;bottom:-80px;right:-80px;background:white;"></div>
+    <div class="deco-circle" style="width:150px;height:150px;top:-40px;left:-40px;background:#F4A261;"></div>
+    <div style="position:relative;z-index:1;">
+      <p style="font-family:'Playfair Display';font-size:72px;margin-bottom:16px;">謝謝</p>
+      <div class="deco-line" style="margin:0 auto 24px;background:#E9C46A;"></div>
+      <p style="font-size:22px;opacity:0.85;margin-bottom:12px;">讓 AI 成為你的神隊友 🤝</p>
+      <p style="font-size:15px;opacity:0.6;">蘇澳國小教師研習 · 115年6月3日 · 許凱琳老師</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="slide-counter" id="slideCounter">1 / 15</div>
+<div class="nav-hint">← → 鍵換頁，或點擊畫面</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function goTo(n) {
+    const next = Math.max(0, Math.min(n, slides.length - 1));
+    if (next === current) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    const old = current;
+    setTimeout(() => slides[old].classList.remove('prev'), 500);
+    current = next;
+    slides[current].classList.add('active');
+    const pct = ((current + 1) / slides.length) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  slides[0].classList.add('active');
+  document.getElementById('progressBar').style.width = (1 / slides.length * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+  });
+
+  document.getElementById('slidesWrapper').addEventListener('click', () => goTo(current + 1));
+</script>
+</body>
+</html>
