@@ -880,11 +880,22 @@
   document.getElementById('progressBar').style.width = (1 / slides.length * 100) + '%';
 
   document.addEventListener('keydown', e => {
+    // 第三頁（文字雲）：若焦點在輸入框內，完全不換頁
+    if (current === 2) {
+      const tag = document.activeElement.tagName;
+      if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+      // 非輸入框時，只允許左右鍵換頁，不允許空白鍵（避免誤觸）
+      if (e.key === 'ArrowRight') goTo(current + 1);
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      return;
+    }
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
   });
 
   document.getElementById('slidesWrapper').addEventListener('click', e => {
+    // 第三頁（文字雲）：點擊不換頁
+    if (current === 2) return;
     if (!document.getElementById('jumpMenu').contains(e.target)) goTo(current + 1);
   });
 </script>
