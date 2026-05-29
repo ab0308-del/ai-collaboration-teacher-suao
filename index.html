@@ -266,6 +266,105 @@
     </div>
   </div>
 
+  <!-- 文字雲互動頁 -->
+  <div class="slide" style="flex-direction:column;background:#1a1a2e;padding:30px 50px;">
+    <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:900;color:#00d4ff;margin-bottom:20px;text-shadow:0 0 20px rgba(0,212,255,0.4);">你希望AI在教學上可以幫你到什麼程度？</h2>
+    <div style="display:flex;gap:20px;width:100%;flex:1;">
+      <div style="width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#16213e;border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;">
+          <h3 style="color:#00d4ff;font-size:0.9rem;margin-bottom:10px;text-align:center;">輸入你的想法</h3>
+          <textarea id="wc-input" placeholder="輸入後按送出..." style="width:100%;background:#1a1a2e;border:2px solid rgba(0,212,255,0.2);border-radius:8px;color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:0.95rem;padding:10px;resize:none;height:70px;"></textarea>
+          <button id="wc-submit" style="width:100%;margin-top:8px;background:#00d4ff;color:#1a1a2e;border:none;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:0.95rem;font-weight:700;padding:10px;cursor:pointer;">送出 ↵</button>
+          <div id="wc-msg" style="text-align:center;font-size:0.8rem;color:#10b981;min-height:1.2em;margin-top:6px;"></div>
+        </div>
+        <div style="background:#16213e;border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:16px;flex:1;overflow-y:auto;max-height:300px;">
+          <h3 style="color:#00d4ff;font-size:0.9rem;margin-bottom:10px;display:flex;align-items:center;gap:6px;">熱門回答 <span style="background:#ef4444;color:#fff;font-size:0.6rem;font-weight:700;padding:2px 5px;border-radius:3px;animation:pulse 1.5s infinite;">LIVE</span></h3>
+          <div id="wc-lb"></div>
+        </div>
+      </div>
+      <div style="flex:1;position:relative;">
+        <canvas id="wc-canvas" style="width:100%;height:100%;"></canvas>
+        <p id="wc-hint" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#64748b;font-size:0.9rem;text-align:center;">輸入第一個想法<br>文字雲就會出現 ✨</p>
+      </div>
+    </div>
+    <div style="padding-top:10px;color:#64748b;font-size:0.8rem;">總提交：<span id="wc-total" style="color:#00d4ff;font-weight:700;">0</span> &nbsp;|&nbsp; 不同回答：<span id="wc-unique" style="color:#00d4ff;font-weight:700;">0</span></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.0/wordcloud2.min.js"></script>
+  <script>
+  (function(){
+    const SUPABASE_URL = 'https://demckofqselwofbpdztn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlbWNrb2Zxc2Vsd29mYnBkenRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Mzk3MDYsImV4cCI6MjA5MzQxNTcwNn0.OQFeOvbYVKjHey7soPbuLGtkzCICKg1QPdm8w4l2sS8';
+    const TABLE = 'wordcloud_responses';
+    const QUESTION = '你希望AI在教學上可以幫你到什麼程度？';
+    const COLORS = ['#00d4ff','#7c3aed','#f59e0b','#10b981','#ef4444','#f06595','#74c0fc','#a9e34b'];
+
+    async function fetchData() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?question=eq.${encodeURIComponent(QUESTION)}&select=response`,
+        {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
+      return await res.json();
+    }
+
+    function countFreq(data) {
+      const f = {};
+      data.forEach(r => { const k = (r.response||'').trim(); if(k) f[k]=(f[k]||0)+1; });
+      return f;
+    }
+
+    function render(freq) {
+      const canvas = document.getElementById('wc-canvas');
+      canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+      const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]);
+      const max = entries[0]?.[1]||1;
+      const hint = document.getElementById('wc-hint');
+      if(entries.length > 0) hint.style.display='none'; else hint.style.display='block';
+      WordCloud(canvas, {
+        list: entries.map(([w,c])=>[w, Math.round(18+(c/max)*70)]),
+        gridSize:8, fontFamily:'Noto Sans TC,sans-serif',
+        color:()=>COLORS[Math.floor(Math.random()*COLORS.length)],
+        rotateRatio:0.3, rotationSteps:2, backgroundColor:'transparent', shuffle:true
+      });
+      const lb = document.getElementById('wc-lb');
+      lb.innerHTML = entries.slice(0,12).map(([w,c])=>
+        `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,212,255,0.1);font-size:0.82rem;">
+          <span style="color:#f1f5f9;">${w}</span>
+          <span style="color:#f59e0b;font-weight:700;">${c}</span>
+        </div>`).join('');
+      const total = Object.values(freq).reduce((a,b)=>a+b,0);
+      document.getElementById('wc-total').textContent = total;
+      document.getElementById('wc-unique').textContent = Object.keys(freq).length;
+    }
+
+    async function refresh() {
+      try { const d = await fetchData(); render(countFreq(d)); } catch(e){}
+    }
+
+    document.getElementById('wc-submit').addEventListener('click', async()=>{
+      const val = document.getElementById('wc-input').value.trim();
+      if(!val) return;
+      const msg = document.getElementById('wc-msg');
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`,{
+          method:'POST',
+          headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},
+          body:JSON.stringify({question:QUESTION, response:val})
+        });
+        document.getElementById('wc-input').value='';
+        msg.textContent='✅ 已送出！';
+        setTimeout(()=>msg.textContent='',2000);
+        await refresh();
+      } catch(e){ msg.textContent='❌ 送出失敗'; }
+    });
+
+    document.getElementById('wc-input').addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('wc-submit').click();}
+    });
+
+    refresh();
+    setInterval(refresh, 3000);
+  })();
+  </script>
+  <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}</style>
+
   <!-- 今天的重點 -->
   <div class="slide" style="background:white;flex-direction:column;align-items:flex-start;justify-content:center;">
     <div style="width:100%;max-width:900px;">
@@ -692,7 +791,7 @@
 </div>
 
 <div class="progress-bar" id="progressBar"></div>
-<div class="slide-counter" id="slideCounter">1 / 15</div>
+<div class="slide-counter" id="slideCounter">1 / 16</div>
 <div class="nav-hint">← → 鍵換頁，或點擊畫面</div>
 
 <script>
